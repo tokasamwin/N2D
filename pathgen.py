@@ -1,14 +1,32 @@
-import nova.neutronics.nCrossSection as ncs
+#import nova.neutronics.nCrossSection as ncs
 import numpy as np
 from shapely import geometry as geom
 import random
 
-def intersect([Ax,Ay],[Bx,By],checktype='all',returntype='normal'):
+def perp( a ) :
+    b = np.empty_like(a)
+    b[0] = -a[1]
+    b[1] = a[0]
+    return b
+
+# line segment a given by endpoints a1, a2
+# line segment b given by endpoints b1, b2
+# return 
+def seg_intersect(a1,a2, b1,b2) :
+    da = a2-a1
+    db = b2-b1
+    dp = a1-b1
+    dap = perp(da)
+    denom = np.dot( dap, db)
+    num = np.dot( dap, dp )
+    return (num / denom.astype(float))*db + b1
+
+def intersect(A,B,checktype='all',returntype='normal'):
 	fwdind=[]
 	bckind=[]
 	x=[]
 	y=[]
-	for i in range(len(Ax[:-1]):
+	for i in range(len(Ax[:-1])):
 		breakcheck=False
 		u=[Ax[i+1]-Ax[i],Ay[i+1]-Ay[i]]
 		for j in range(len(Bx[:-1])):
@@ -102,7 +120,7 @@ class npath(object):
 		for i in range(fidelity):
 			point3D.append(SP+(EP-SP)*(i+1)/fidelity)
 			req=np.sqrt(point3D[i][0]**2+point3D[i][2]**2)
-			point2D.append(geom.Point([req,point3D[1]))
+			point2D.append(geom.Point([req,point3D[1]]))
 		path2D=LineString(point2D)
 		intersectlist=path2D.intersection(self.blregion)
 		r=[]
