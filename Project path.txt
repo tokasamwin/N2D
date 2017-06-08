@@ -1,0 +1,44 @@
+Analysis process:
+
+Pre-processing:
+	Generate a boundary (maximum radius, maximum height)
+	Take input r-z map of boundaries with materials in these spaces
+	
+Initiating event (neutron source) with E=E0 (14.1MeV)
+Randomised unit vector using RN1 and RN2 from start point (may be RN0 if neutron source)
+Generate 3D line from start point to boundary
+Convert to 2D line equating x,y to r
+Generate line intersections
+Generate RN3 and compare to likelihood of reaction between intersections
+If no reaction, lose neutron
+Else if reaction in boundary determined by RN3, generate RN4 and find which reaction occurs
+	If reaction is neutron death:
+		if neutron death leads to tritium, add to TBR
+		else if neutron death produces no tritium, end sequence
+	If reaction is neutron multiplication:
+		Start new sequence
+	If reaction is collision:
+		Generate RN5 to find scattering angle and RN6 to find random orientation angle
+		If collision is elastic:
+			Start new sequence with E1=E0*f(theta)=E0*g(RN5)
+		If collision is inelastic:
+			Start new sequence with E1=(E0-E_reac)*f(theta)=(E0-E_reac)*g(RN5)
+If neutrons generated are part of a >=3 body reaction, split the energy by some method (TBD)
+
+Work to do:
+Plasma profile generator: input from Jon Shimwell
+	Likelihood is three random numbers: a,theta as position from magnetic axis, energy
+	
+Generate 3D ray path up to boundary /
+
+Generate 2D line /
+
+Find intersections /
+
+Find resulting reaction
+
+Model reaction type
+
+Start new path
+
+Create a task scheduler to give tasks to each core
