@@ -6,6 +6,53 @@ def line(p1, p2):
     C = (p1[0]*p2[1] - p2[0]*p1[1])
     return A, B, -C
 
+def curvelineintersect(startpoint,unitvec,linepoints,otype='p'):
+	'''
+	Inputs:
+	Linepoints - list of two tuples, which are x,y coordinates specifiying the limits of the lines
+	unitvec - list of three values (u,v,w) which are the directions in (x,y,z)
+	startpoint - starting point of the ray
+	Outputs:
+	[x,y] coordinates of intersection
+	or [x1,y1,x2,y2] coordinates of two intersections
+	'''
+	x0=startpoint[0]
+	y0=startpoint[1]
+	z0=startpoint[2]
+	r0=(x0**2+y0**2)**0.5
+	u=unitvec[0]
+	v=unitvec[1]
+	w=unitvec[2]
+	velmag=(u**2+v**2+w**2)**0.5
+	(r1,z1)=linepoints[0]
+	(r2,z2)=linepoints[1]
+	m=(z2-z1)/(r2-r1)
+	a=(u**2+v**2)*m**2/w**2
+	b=2*m*((x0*u+y0*v)+(z1-z0)/w)/w
+	c=r0**2+2*(z1-z0)*(x0*u+y0*v)/w+(u**2+v**2)*(z1-z0)**2/w**2
+	variable=b**2-4*a*c
+	if variable<0:
+		return [],[]
+	elif variable==0:
+		r=[b/(2*a)]
+	elif variable>=b:
+		r=[(b+variable)/(2*a)]
+	else:
+		r=[(b-variable)/(2*a),(b+variable)/(2*a)]
+	rarr=[]
+	zarr=[]
+	Larr=[]
+	for rval in r:
+		if np.amin(r1,r2)<=rval<=np.amax(r1,r2):
+			rarr.append(rval)
+			zarr.append(z1+m*(rval-r1))
+			t=(zarr[-1]-z0)/w
+			Larr.append(t*velmag)
+	if otype=='p':
+		return rarr,zarr
+	elif otype=='l':
+		return Larr
+	
 def intersection(L1, L2):
     D  = L1[0] * L2[1] - L1[1] * L2[0]
     Dx = L1[2] * L2[1] - L1[1] * L2[2]
@@ -45,7 +92,7 @@ def thetaarray(x2D,z):
         raise AttributeError('need iterable')
     theta=[]
     for i in range(len(x2D)-1):
-        theta.append(np.arctan2(x2D[i+1]-x2D[i],z[i+1],z[i])])
+        theta.append(np.arctan2(x2D[i+1]-x2D[i],z[i+1],z[i]))
     return theta
     
 def hitpoint(pathst,pathe,lp1,lp2):
