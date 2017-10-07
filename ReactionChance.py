@@ -6,7 +6,7 @@ e=np.exp(1)
 
 class reactions(object):
 	def __init__(self,seed=None):
-		if seed='today':
+		if seed=='today':
 			dateseed=int(datetime.datetime.now().strftime('%d%M%y'))
 			self.randgen=random.seed(dateseed)
 		elif type(seed)==int or type(seed)==float:
@@ -14,7 +14,6 @@ class reactions(object):
 			
 	def findreaction(self,Larr,ncsarr,E):
 		RN3=self.randgen.random()
-		#popfrac=1.0 #calculation works on ruling out percentiles, which are 1-popfrac
 		Lsum=0
 		Sigsum=0
 		'''
